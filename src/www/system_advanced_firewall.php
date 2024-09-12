@@ -58,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $pconfig['enablebinatreflection'] = !empty($config['system']['enablebinatreflection']);
     $pconfig['enablenatreflectionhelper'] = isset($config['system']['enablenatreflectionhelper']) ? $config['system']['enablenatreflectionhelper'] : null;
     $pconfig['bypassstaticroutes'] = isset($config['filter']['bypassstaticroutes']);
+    $pconfig['disableport0block'] = isset($config['filter']['disableport0block']);
     $pconfig['syncookies'] = isset($config['system']['syncookies']) ? $config['system']['syncookies'] : null;
     $pconfig['syncookies_adaptstart'] = isset($config['system']['syncookies_adaptstart']) ? $config['system']['syncookies_adaptstart'] : null;
     $pconfig['syncookies_adaptend'] = isset($config['system']['syncookies_adaptend']) ? $config['system']['syncookies_adaptend'] : null;
@@ -214,6 +215,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $config['filter']['bypassstaticroutes'] = $pconfig['bypassstaticroutes'];
         } elseif (isset($config['filter']['bypassstaticroutes'])) {
             unset($config['filter']['bypassstaticroutes']);
+        }
+
+        if (!empty($pconfig['disableport0block'])) {
+            $config['filter']['disableport0block'] = $pconfig['disableport0block'];
+        } elseif (isset($config['filter']['disableport0block'])) {
+            unset($config['filter']['disableport0block']);
         }
 
         if ($pconfig['bogonsinterval'] != $config['system']['bogons']['interval']) {
@@ -609,6 +616,17 @@ include("head.inc");
                       gettext('If you only want to disable NAT, and not firewall rules, visit the %sOutbound NAT%s page.'),
                       '<a href="/firewall_nat_out.php">', '</a>'
                     )?>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><a id="help_for_disableport0block" href="#" class="showhelp"><i class="fa fa-info-circle"></i></a> <?=gettext("Disable Port 0 Blocking");?></td>
+                <td>
+                  <input name="disableport0block" type="checkbox" value="yes" <?= !empty($pconfig['disableport0block']) ? "checked=\"checked\"" : "";?>/>
+                  <?=gettext("Disable blocking of invalid port 0");?>
+                  <div class="hidden" data-for="help_for_disableport0block">
+                    <?= gettext('This will disable blocking of this port on all interfaces. This port is used for HA ports load balancing in Azure.') ?><br />
+                    <?= gettext('You might want to redefine this rule for other interfaces.') ?><br />
                   </div>
                 </td>
               </tr>

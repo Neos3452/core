@@ -238,28 +238,28 @@ function filter_core_rules_system($fw, $defaults)
         1,
         array('ipprotocol' => 'inet6', 'protocol' => 'ipv6-icmp', 'icmp6-type' => '128,129,133,134,135,136',
             'statetype' => 'keep', 'descr' => 'IPv6 RFC4890 requirements (ICMP)', 'from' => '(self)',
-            'to' => 'fe80::/10,ff02::/16', 'direction' => 'out' ),
+            'to' => 'fe80::/10,ff02::/16', 'direction' => 'out'),
         $defaults['pass']
     );
     $fw->registerFilterRule(
         1,
         array('ipprotocol' => 'inet6', 'protocol' => 'ipv6-icmp', 'icmp6-type' => '128,133,134,135,136',
             'statetype' => 'keep', 'descr' => 'IPv6 RFC4890 requirements (ICMP)', 'from' => 'fe80::/10',
-            'to' => 'fe80::/10,ff02::/16', 'direction' => 'in' ),
+            'to' => 'fe80::/10,ff02::/16', 'direction' => 'in'),
         $defaults['pass']
     );
     $fw->registerFilterRule(
         1,
         array('ipprotocol' => 'inet6', 'protocol' => 'ipv6-icmp', 'icmp6-type' => '128,133,134,135,136',
             'statetype' => 'keep', 'descr' => 'IPv6 RFC4890 requirements (ICMP)', 'from' => 'ff02::/16',
-            'to' => 'fe80::/10', 'direction' => 'in' ),
+            'to' => 'fe80::/10', 'direction' => 'in'),
         $defaults['pass']
     );
     $fw->registerFilterRule(
         1,
         array('ipprotocol' => 'inet6', 'protocol' => 'ipv6-icmp', 'icmp6-type' => '128,133,134,135,136',
             'statetype' => 'keep', 'descr' => 'IPv6 RFC4890 requirements (ICMP)', 'from' => '::',
-            'to' => 'ff02::/16', 'direction' => 'in' ),
+            'to' => 'ff02::/16', 'direction' => 'in'),
         $defaults['pass']
     );
     // block all targeting port 0
@@ -267,7 +267,9 @@ function filter_core_rules_system($fw, $defaults)
         $fw->registerFilterRule(
             1,
             array('ipprotocol' => 'inet46', 'protocol' => 'tcp/udp', $target => '0',
-                'descr' => 'block all targeting port 0'),
+                'descr' => 'block all targeting port 0',
+                '#ref' => 'system_advanced_firewall.php#disableport0block',
+                'disabled' => isset($config['filter']['disableport0block'])),
             $defaults['block']
         );
     }
@@ -284,7 +286,7 @@ function filter_core_rules_system($fw, $defaults)
     $fw->registerFilterRule(
         1,
         array('protocol' => 'tcp', 'from' => '<sshlockout>', 'to' => '(self)' , 'descr' => 'sshlockout', 'direction' => 'in',
-        'to_port' => !empty($config['system']['ssh']['port']) ? $config['system']['ssh']['port'] : 22),
+            'to_port' => !empty($config['system']['ssh']['port']) ? $config['system']['ssh']['port'] : 22),
         $defaults['block']
     );
     $webport = '443';
@@ -296,7 +298,7 @@ function filter_core_rules_system($fw, $defaults)
     $fw->registerFilterRule(
         1,
         array('protocol' => 'tcp', 'from' => '<sshlockout>', 'to' => '(self)' , 'descr' => 'sshlockout',
-        'direction' => 'in','to_port' => $webport),
+            'direction' => 'in', 'to_port' => $webport),
         $defaults['block']
     );
 
@@ -529,7 +531,7 @@ function filter_core_rules_system($fw, $defaults)
     $fw->registerFilterRule(
         5,
         array('direction' => 'out', 'statetype' => 'keep', 'allowopts' => true,
-        'quick' => false, "descr" => "let out anything from firewall host itself"),
+            'quick' => false, "descr" => "let out anything from firewall host itself"),
         $defaults['pass']
     );
     // ipsec
